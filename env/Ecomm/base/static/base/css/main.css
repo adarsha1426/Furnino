@@ -1,0 +1,45 @@
+
+  
+  /* Set the image to cover the full screen */
+.image-container img {
+  width: 100%;
+  height: 100vh;
+  margin-top: 0px; /* Adjust this value based on your actual navigation bar height */
+}
+
+/* Overlay text container */
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    right: 10%;
+    transform: translate(0, -50%);
+    text-align: right;
+    color: black;
+    background-color: rgba(251, 21, 21, 0.7); /* Reddish transparent background */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+/* Overlay text styles */
+.overlay-text h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.overlay-text p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.overlay-text a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+
