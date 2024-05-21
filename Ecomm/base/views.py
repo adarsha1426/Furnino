@@ -3,9 +3,12 @@ from .forms import LoginForm,RegisterForm
 from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+
 from .models import Category,Product
+
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
+
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
@@ -78,24 +81,45 @@ def product(request):
 def category(request,name):
     category=get_object_or_404(Category,name=name)
     if category.name=='Dining':
-        return render(request,'base/dining.html',
-                  {
-                      'category':category
-                  })
-    elif category.name=='Kitchen':
-        return render(request,'base/kitchen.html',
-                  {
-                      'category':category
-                  })
-    elif category.name=='Living':
-        return render(request,'base/living.html',
-                  {
-                      'category':category
-                  })
-    elif category.name=='Bedroom':
+        product=Product.objects.filter(category=category)
+        product_name=category.name
         return render(request,'base/bedroom.html',
                   {
-                      'category':category
+                      'product':product,
+                      "product_name":product_name,
                   })
+    
+    
+    elif category.name=='Living':
+        product=Product.objects.filter(category=category)
+        product_name=category.name
+        return render(request,'base/bedroom.html',
+                  {
+                      'product':product,
+                      "product_name":product_name,
+                  })
+    
+    elif category.name=='Bedroom':
+        product=Product.objects.filter(category=category)
+        product_name=category.name
+        return render(request,'base/bedroom.html',
+                  {
+                      'product':product,
+                      "product_name":product_name,
+                  })
+    
     else:
         return HttpResponse("Error")
+    
+
+def description(request,name):
+    description=Product.objects.filter(name=name)
+    return render(request,"base/product-description.html",
+                  {
+                      "description":description,
+                      
+                  })
+    
+
+def add_to_cart(request,id):
+    id=Product.objects.filter(id=product.name)

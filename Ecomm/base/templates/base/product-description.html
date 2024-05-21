@@ -1,0 +1,37 @@
+{% load static %}
+{% include "nav.html" %}
+
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            {% for item in description %}
+
+                <div class="card mb-3" style="max-width: 100%;">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <img src="{{item.image.url}}" class="img-fluid rounded-start" alt="{{item.name}}">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">{{item.name}}</h5>
+                                <p class="card-text">{{item.description|safe}}</p>
+                                <h3 class="card-text">Rs.{{item.price}}</h3>
+                                <a href="#" class="btn btn-primary">Buy Now</a>
+                                <a href="#" class="btn btn-primary">Add to cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

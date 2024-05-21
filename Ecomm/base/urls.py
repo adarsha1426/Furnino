@@ -11,4 +11,5 @@ urlpatterns = [
     path('logout',views.logout,name="logout"),
     path('product/',views.product,name="product"),
     path('category/<str:name>',views.category,name="category"),
-]
+    path('description/<str:name>',views.description,name="description"),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,9 +7,6 @@
     </head>
     <body>
         {% include "nav.html" %}
-          
-              
-   
     <div class="container">
         {%block content%}
         <div class="container">
@@ -18,14 +15,10 @@
             <div class="overlay-text"> <!-- Text overlay centered -->
               <h1>Welcome to Furnino</h1>
               <p>Discover our latest collections</p>
-              <a href="#" class="btn btn-primary">Shop Now</a>
+              <a href="{% url "product" %}" class="btn btn-primary">Shop Now</a>
             </div>
         {%endblock%}
     </div>
-    {% if user is None%}
-      <p>You are logged out</p>
-      {% else %}
-      <p>you are logged in as{{ user}}</p>
-    {% endif %}
+   
 </body>
 </html>

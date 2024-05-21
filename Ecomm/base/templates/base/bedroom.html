@@ -1,1 +1,31 @@
-<h1>Bedroom</h1>
+{% load static %}
+{% include "nav.html" %}
+
+{% block content %}
+<style>
+    .fixed-image {
+        height: 200px; /* Adjust the height as needed */
+        object-fit: cover;
+        width: 100%;
+    }
+</style>
+<h1 style="color:red">{{product_name}}</h1>
+<div class="d-flex flex-wrap justify-content-start">
+{% for item in product %}
+<div class="card-group">
+    <div class="card" style="width: 18rem;">
+        <a href="{% url "description" item.name %}">
+        <img class="fixed-image" src="{{ item.image.url }}" class="card-img-top" alt="{{item.name}}">
+        </a>
+        <div class="card-body">
+            <h5 class="card-title">{{item.name}}</h5>
+            <p class="card-text">Rs.{{item.price}}</p>
+            <a href="#" class="btn btn-primary">Buy Now</a>
+            <a href="#" class="btn btn-primary">Add to Cart</a>
+        </div>
+    </div>  
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}
