@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import Category,Product
+from .models import Category,Product,Customer
 
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
@@ -32,6 +32,7 @@ def login_view(request):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
+
             if user is not None and user.is_active:
                 login(request, user)  # Only call login if user is valid
                 return redirect("home")
@@ -60,6 +61,10 @@ def register(request):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
+            user= form.save(commit=True)
+            user.is_superuser= True
+            user.is_staff= True
+            user.save()
 
             if user is not None and user.is_active:
                 login(request, user)  # Log the user in

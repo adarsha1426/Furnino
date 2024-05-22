@@ -38,11 +38,18 @@ class Customer(models.Model):
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
 
+    def __str__(self):
+        return self.full_name
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date_ordered = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.customer.full_name
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+
+    
