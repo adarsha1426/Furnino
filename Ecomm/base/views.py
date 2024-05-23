@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import Category,Product,Customer
+from .models import Category,Product,Customer,Order,OrderItem
 
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
@@ -125,6 +125,17 @@ def description(request,name):
                       
                   })
     
+def cart(request):
+    if request.user.is_authenticated:
+        customer= request.user.customer
+        order,created=Order.objects.get_or_create(customer=customer)
+        items=order.orderitem_set.all() #gets all the order item for that order
+    else:
+        items=[]
+        order={'order.get_cart_items':0,'get_cart_items':0}
+    return render(request,'base/cart.html',{'items':items,
+                                            'oerder':order})
 
-def add_to_cart(request,id):
-    id=Product.objects.filter(id=product.name)
+
+def checkout(request):
+    return render(request,'base/checkout.html')

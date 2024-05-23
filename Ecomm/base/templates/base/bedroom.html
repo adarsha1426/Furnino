@@ -21,11 +21,14 @@
             <h5 class="card-title">{{item.name}}</h5>
             <p class="card-text">Rs.{{item.price}}</p>
             <a href="#" class="btn btn-primary">Buy Now</a>
-            <a href="#" class="btn btn-primary">Add to Cart</a>
+            {% comment %} <a href="{% url "cart" %}"></a> {% endcomment %}
+            <button data-product={{item.name}} data-action="add"  class="btn btn-outline-secondary add-btn update-btn">Add to Cart</button>
         </div>
+
     </div>  
 </div>
 {% endfor %}
 </div>
 
 {% endblock %}
+<script type="text/javascript" src="{% static "cart.js" %}"> </script>

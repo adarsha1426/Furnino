@@ -136,3 +136,4 @@ MEDIA_ROOT = BASE_DIR / 'media'  # Directory to store media files
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CART_SESSION_ID='cart'

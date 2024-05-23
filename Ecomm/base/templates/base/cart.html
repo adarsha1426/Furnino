@@ -1,18 +1,90 @@
-
-
-{% block content %}
 {% load static %}
-<html>
-    <head>
-      <link href="{% static "base/css/cart.css" %}" rel="stylesheet">
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-      
-    </head>
-    <body>
-        {% include "nav.html" %}
-        
-      {% comment "navbr koo tala arko nav bar ma "   %} item quantity price {% endcomment %}
+{% include "nav.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+  @media (min-width: 1025px) {
+    .h-custom {
+    height: 100vh !important;
+    }
+    }
+</style>
+<body>
+  <section class="h-100 h-custom">
+    <div class="container h-100 py-5">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+  
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" class="h5">Shopping Bag</th>
+                  
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items  %}
+                
+                <tr>
+                  <th scope="row">
+                    <div class="d-flex align-items-center">
+                      <img src="{{item.product.image.url}}" class="img-fluid rounded-3"
+                        style="width: 120px;" alt="Book">
+                      <div class="flex-column ms-4">
+                        <p class="mb-2">{{item.product.name}}</p>
+                      </div>
+                    </div>
+                  </th>
+                  
+                  <td class="align-middle">
+                    <div class="d-flex flex-row">
+                      <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
+                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                        <i class="fas fa-minus"></i>
+                      </button>
+  
+                      <input id="form1" min="0" name="quantity" value="2" type="number"
+                        class="form-control form-control-sm" style="width: 50px;" />
+  
+                      <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
+                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="align-middle">
+                    <p class="mb-0" style="font-weight: 500;">{{item.get_cost}}</p>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <a href="{% url "checkout" %}" >
+          <button  type="button"  class="btn btn-primary btn-block btn-lg">
+            <div class="d-flex justify-content-between">
+              <span > Checkout</span>
+            </div>
+          </button>    
+            
+  
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-{% endblock  %}

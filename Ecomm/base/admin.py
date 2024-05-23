@@ -12,6 +12,10 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields={'slug':('name',)}
 
 
-admin.site.register(Order)
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display=['customer','date_ordered']
+    list_filter=('customer',)
+    
 admin.site.register(OrderItem)
 admin.site.register(Customer)
