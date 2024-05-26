@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+
 class Category(models.Model):
     name = models.CharField(max_length=200)  # dining, living, kitchen
     slug = models.SlugField(max_length=200, unique=True)
@@ -71,5 +73,3 @@ class OrderItem(models.Model):
 
     def get_cost(self):
         return self.product.price * self.quantity
-    
-    

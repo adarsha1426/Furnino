@@ -65,7 +65,8 @@ def register(request):
             user.is_superuser= True
             user.is_staff= True
             user.save()
-
+            Customer.objects.create(user=user)
+            
             if user is not None and user.is_active:
                 login(request, user)  # Log the user in
                 messages.success(request, "Registration successful!")  # Message indicating success
@@ -80,8 +81,8 @@ def register(request):
     return render(request, "registration/register.html", {"form": form})
 
 
-def product(request):
-    return render(request,'base/product.html')
+def categories(request):
+    return render(request,'base/categories.html')
 
 def category(request,name):
     category=get_object_or_404(Category,name=name)
@@ -124,8 +125,16 @@ def description(request,name):
                       "description":description,
                       
                   })
-    
-def cart(request):
+def product_list(request):
+    product=Product.objects.all()
+    return render(request,"base/product_list.html",{
+        "product":product
+    })
+def add_to_cart(request,id):
+    id=get_object_or_404(Product,id=id)
+    cart=[]
+    pass
+def checkout(request):
     if request.user.is_authenticated:
         customer= request.user.customer
         order,created=Order.objects.get_or_create(customer=customer)
@@ -133,9 +142,4 @@ def cart(request):
     else:
         items=[]
         order={'order.get_cart_items':0,'get_cart_items':0}
-    return render(request,'base/cart.html',{'items':items,
-                                            'oerder':order})
-
-
-def checkout(request):
     return render(request,'base/checkout.html')
