@@ -31,8 +31,5 @@ class RegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-    
-class CartForm():
-    pass
 
    

@@ -4,7 +4,9 @@ from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import Category,Product,Customer,Order,OrderItem
+from .models import Category,Product,Customer,Order,OrderItem,User
+
+import datetime
 
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
@@ -117,7 +119,7 @@ def category(request,name):
     else:
         return HttpResponse("Error")
     
-
+#product description
 def description(request,name):
     description=Product.objects.filter(name=name)
     return render(request,"base/product-description.html",
@@ -125,18 +127,69 @@ def description(request,name):
                       "description":description,
                       
                   })
+#listing all the product in products page
 def product_list(request):
     product=Product.objects.all()
     return render(request,"base/product_list.html",{
         "product":product
     })
-def add_to_cart(request,id):
-    id=get_object_or_404(Product,id=id)
-    cart=[]
-    pass
+
+
+def view_cart(request):
+    if request.user.is_authenticated:
+        try:
+            customer = Customer.objects.get(user=request.user)
+            order = Order.objects.filter(customer=customer, complete=False).first()
+            if order:
+                items = order.order_items.all()
+                print(f"Items in cart for {request.user.username}: {items}")
+            else:
+                items = []
+                print(f"No active order found for {request.user.username}")
+        except Customer.DoesNotExist:
+            items = []
+            print(f"No customer found for user {request.user.username}")
+    else:
+        items = []
+        print("User is not authenticated")
+    
+    return render(request, 'base/cart.html', {"items": items})
+
+def add_to_cart(request, id):
+    item = get_object_or_404(Product, id=id)
+    
+    # Get or create the order for the current user
+    user = request.user
+    customer = Customer.objects.get(user=user)
+    # Retrieve the most recent incomplete order for the customer
+    order = Order.objects.filter(customer=customer, complete=False).order_by('-date_ordered').first()
+    if order is None:
+        order = Order.objects.create(customer=customer, complete=False)
+    
+    # Get or create the order item for the product within the selected order
+    order_item, created = OrderItem.objects.get_or_create(product=item, order=order)
+    
+    # If the order item already exists in the order, increase the quantity
+    if not created:
+        order_item.quantity += 1
+        order_item.save()
+    
+    return redirect('product_list')   # Redirect to the product list page
+
+
+
+#listing all  the elements in cart
+
+    
+
+
+
+
+
 def checkout(request):
     if request.user.is_authenticated:
         customer= request.user.customer
+        
         order,created=Order.objects.get_or_create(customer=customer)
         items=order.orderitem_set.all() #gets all the order item for that order
     else:

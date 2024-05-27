@@ -32,13 +32,13 @@
                 </tr>
               </thead>
               <tbody>
-                {% for item in items  %}
+                {% for item in item  %}
                 
                 <tr>
                   <th scope="row">
                     <div class="d-flex align-items-center">
-                      <img src="{{item.product.image.url}}" class="img-fluid rounded-3"
-                        style="width: 120px;" alt="Book">
+                      <img src="{{item.image.url}}" class="img-fluid rounded-3"
+                        style="width: 120px;" alt="{{item}}">
                       <div class="flex-column ms-4">
                         <p class="mb-2">{{item.product.name}}</p>
                       </div>
