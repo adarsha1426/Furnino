@@ -16,6 +16,7 @@
     }
 </style>
 <body>
+
   <section class="h-100 h-custom">
     <div class="container h-100 py-5">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -32,15 +33,15 @@
                 </tr>
               </thead>
               <tbody>
-                {% for item in item  %}
+                {% for item in items  %}
                 
                 <tr>
                   <th scope="row">
                     <div class="d-flex align-items-center">
-                      <img src="{{item.image.url}}" class="img-fluid rounded-3"
+                      <img src="{{item.product.image.url}}" class="img-fluid rounded-3"
                         style="width: 120px;" alt="{{item}}">
                       <div class="flex-column ms-4">
-                        <p class="mb-2">{{item.product.name}}</p>
+                        <p class="mb-2">{{item.product}}</p>
                       </div>
                     </div>
                   </th>
@@ -52,7 +53,7 @@
                         <i class="fas fa-minus"></i>
                       </button>
   
-                      <input id="form1" min="0" name="quantity" value="2" type="number"
+                      <input id="form1" min="0" name="quantity" value="{{item.quantity}}" type="number"
                         class="form-control form-control-sm" style="width: 50px;" />
   
                       <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
@@ -75,8 +76,6 @@
               <span > Checkout</span>
             </div>
           </button>    
-            
-  
             </div>
           </div>
   

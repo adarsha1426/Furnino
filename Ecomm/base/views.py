@@ -3,11 +3,7 @@ from .forms import LoginForm,RegisterForm
 from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
 from .models import Category,Product,Customer,Order,OrderItem,User
-
-import datetime
-
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
 
@@ -15,15 +11,6 @@ from django.urls  import reverse
 @login_required(login_url='login')
 def home(request):
     return render(request,'base/home.html')
-
-def store(request):
-    context={}
-    return render(request,'base/store.html',context)
-
-def cart(request):
-    context={}
-    return render(request,'base/cart.html',context)
-
 
 def login_view(request):
 # Redirect logged-in users
@@ -134,15 +121,15 @@ def product_list(request):
         "product":product
     })
 
-
 def view_cart(request):
-    if request.user.is_authenticated:
+    if request.user:
         try:
-            customer = Customer.objects.get(user=request.user)
+            user = request.user
+            customer = Customer.objects.get(user=user)
             order = Order.objects.filter(customer=customer, complete=False).first()
             if order:
-                items = order.order_items.all()
-                print(f"Items in cart for {request.user.username}: {items}")
+                items = OrderItem.objects.all()
+                print(f"Items in cart for {request.user.username}: {[item.product.name for item in items]}")
             else:
                 items = []
                 print(f"No active order found for {request.user.username}")
@@ -152,13 +139,10 @@ def view_cart(request):
     else:
         items = []
         print("User is not authenticated")
-    
     return render(request, 'base/cart.html', {"items": items})
 
 def add_to_cart(request, id):
     item = get_object_or_404(Product, id=id)
-    
-    # Get or create the order for the current user
     user = request.user
     customer = Customer.objects.get(user=user)
     # Retrieve the most recent incomplete order for the customer
@@ -178,21 +162,6 @@ def add_to_cart(request, id):
 
 
 
-#listing all  the elements in cart
-
-    
-
-
-
-
-
 def checkout(request):
-    if request.user.is_authenticated:
-        customer= request.user.customer
-        
-        order,created=Order.objects.get_or_create(customer=customer)
-        items=order.orderitem_set.all() #gets all the order item for that order
-    else:
-        items=[]
-        order={'order.get_cart_items':0,'get_cart_items':0}
-    return render(request,'base/checkout.html')
+    items=OrderItem.objects.all()
+    return render(request, 'base/checkout.html', {'items': items,})
