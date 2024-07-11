@@ -1,14 +1,15 @@
+from django.db import IntegrityError
 from django.shortcuts import render,redirect,HttpResponse
 from .forms import LoginForm,RegisterForm
 from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Category,Product,Customer,Order,OrderItem,User
+from .models import Category,Product,Customer,Order,OrderItem
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
 
 # Create your views here.
-@login_required(login_url='login')
+
 def home(request):
     return render(request,'base/home.html')
 
@@ -44,31 +45,15 @@ def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # Save the new user
-            form.save()
-            # Authenticate and log in the new user
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(request, username=username, password=password)
-            user= form.save(commit=True)
-            user.is_superuser= True
-            user.is_staff= True
+            user=form.save()
             user.save()
-            Customer.objects.create(user=user)
-            
-            if user is not None and user.is_active:
-                login(request, user)  # Log the user in
-                messages.success(request, "Registration successful!")  # Message indicating success
-                return render(request,'base/home.html')  # Redirect to a desired page (e.g., home)
-
-            messages.error(request, "Authentication failed. Please try again.")  # Message if authentication fails
-        else:
-            messages.error(request, "Form is invalid. Please correct the errors.")  # Message if form is invalid
-
-    # Render the registration form for GET requests or if the form is invalid
-    form = RegisterForm()  # Create a new form instance
+            login(request,user)
+            return redirect('home')
+            messages.success(request,"Account Created successful")
+            # Optionally, you can add any additional actions after saving the user here
+    else:
+        form = RegisterForm()
     return render(request, "registration/register.html", {"form": form})
-
 
 def categories(request):
     return render(request,'base/categories.html')
@@ -143,24 +128,19 @@ def view_cart(request):
 
 def add_to_cart(request, id):
     item = get_object_or_404(Product, id=id)
-    user = request.user
+    user = request.user.is_authenticated
     customer = Customer.objects.get(user=user)
     # Retrieve the most recent incomplete order for the customer
     order = Order.objects.filter(customer=customer, complete=False).order_by('-date_ordered').first()
     if order is None:
         order = Order.objects.create(customer=customer, complete=False)
-    
     # Get or create the order item for the product within the selected order
     order_item, created = OrderItem.objects.get_or_create(product=item, order=order)
-    
     # If the order item already exists in the order, increase the quantity
     if not created:
         order_item.quantity += 1
         order_item.save()
-    
     return redirect('product_list')   # Redirect to the product list page
-
-
 
 def checkout(request):
     items=OrderItem.objects.all()
