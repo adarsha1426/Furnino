@@ -21,21 +21,29 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url "product_list" %}">Products</a>
           </li>
-          {% if user  %}
+          {% if user.is_authenticated  %}
           <li class="nav-item">
             <a class="nav-link active " aria-current="page" href="{% url "cart" %}">Cart</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active " aria-current="page" >Hello {{user}}!!</a>
+            <a class="nav-link active " aria-current="page" >Hello {{user.first_name}}!!</a>
           </li>
           {% endif %}
         </ul>
         </div>
-          <form class="d-flex" role="search"> 
-            <button class="btn btn-outline-success" type="submit">
-            <a href="{% url "logout" %}" style="text-decoration:none">Logout</a>
-          </button>
+        {% if user.is_authenticated %}
+
+        <form class="d-flex" role="search" action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-outline-success" type="submit" style="text-decoration:none;">Logout</button>
         </form>
+    {% else %}
+        <form class="d-flex" role="search">
+            {% csrf_token %}
+            <button class="btn btn-outline-success" type="submit"><a href="{% url 'login' %}" style="text-decoration:none; color:inherit;">Login</a></button>
+        </form>
+    {% endif %}
+
       </div>
     </nav>
         

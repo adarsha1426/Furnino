@@ -1,5 +1,10 @@
 {% extends "base/home.html" %}
 {% load static %}
-{%bloack content%}
-<h3>Store</h3>
+{%block content%}
+
+
+{% for item in order_item %}
+    <h1>{{item.image.url}}</h1>
+{% endfor %}
+<h3></h3>
 {% endblock %}

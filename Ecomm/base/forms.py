@@ -1,19 +1,20 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import Customer
+
 class LoginForm(forms.Form):
-    username=forms.CharField(max_length=100)
-    password=forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)
 
 class RegisterForm(forms.ModelForm):
-    # Explicitly declare the password fields
+    first_name = forms.CharField(max_length=100, label="First Name")
+    last_name = forms.CharField(max_length=100, label="Last Name")
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
     password_confirm = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
-
     class Meta:
-        model = User  # The associated model
-        fields = ["username", "email", "password"]  # Include password explicitly
+        model = User
+        fields = ["first_name", "last_name", "username", "email", "password"]
 
-    # Custom validation to ensure passwords match
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
@@ -24,12 +25,16 @@ class RegisterForm(forms.ModelForm):
 
         return cleaned_data
 
-    # Custom save method to properly hash and store passwords
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])  # Properly hash the password
+        user.set_password(self.cleaned_data["password"])
+        
         if commit:
             user.save()
+            Customer.objects.create(
+                user=user,
+                first_name=self.cleaned_data.get("first_name"),
+                last_name=self.cleaned_data.get("last_name"),
+                email=self.cleaned_data.get("email"),
+            )
         return user
-
-   

@@ -14,9 +14,32 @@
         <!-- Sign-up form on the right -->
         <div class="signup-form">
             <h1>Welcome to Furnino</h1>
+            {% if messages %}
+        {% for message in messages  %}
+          <a style="color:red;">{{message|escape}}</a>
+        {% endfor %}
+      {% endif %}
             <form action="{% url "register" %}" method="POST">
+                {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
                 {% csrf_token %}
-                {{ form.as_p }}
+                <label for="first_name">First Name</label>
+                {{form.first_name}}
+                <label for="last_name">Last Name</label>
+                {{form.last_name}}
+                <label for="username">Username</label>
+                {{ form.username}}
+                <label for="email">Email</label>
+                {{form.email}}
+                <label for="password">Password</label>
+                {{form.password}}
+                <label for="confirm-password">Confirm Password</label>
+                {{form.password_confirm}}
+               
+               
                 <input type="submit" value="Sign Up">
             </form>
             <h3>Already have an account?&ensp;<a href="{% url "login" %}" style="text-decoration:none;">Log In</a></h3>
