@@ -1,7 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth import settings
-
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=200)  # dining, living, kitchen
@@ -37,40 +35,53 @@ class Product(models.Model):
 
 class Customer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     email = models.EmailField()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user_id'], name='unique_user_customer')
+        ]
+        
     def __str__(self):
-        return self.full_name
+        return f"{self.first_name} {self.last_name}"
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=False)
-    item=models.ManyToManyField(Product)
+    items = models.ManyToManyField(Product)
     transaction_id = models.CharField(max_length=200, null=True)
+
     def __str__(self):
         return f"Order #{self.id} by {self.customer.full_name}"
 
     @property
     def get_cart_total(self):
-        orderitems=self.orderitem_set.all()
-        total=sum([item.get_total for item in orderitems])
+        orderitems = self.orderitem_set.all()
+        total = sum([item.get_cost() for item in orderitems])
         return total
+
     @property
     def get_cart_items(self):
-        orderitems=self.orderitem_set.all()
-        total=sum([item.quantity for item in orderitems])
+        orderitems = self.orderitem_set.all()
+        total = sum([item.quantity for item in orderitems])
         return total
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE , null=True)
-    quantity = models.PositiveBigIntegerField(default=1)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    quantity = models.PositiveIntegerField(default=0)
     complete = models.BooleanField(default=False, null=True, blank=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Ensure this matches the User model
 
     def __str__(self):
-        return f"OrderItem #{self.id} ({self.quantity} x {self.product.name})"
+        return f"OrderItem {self.id} ({self.quantity} x {self.product.name})"
 
     def get_cost(self):
         return self.product.price * self.quantity
