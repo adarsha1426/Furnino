@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.shortcuts import render,redirect,HttpResponse
+from django.shortcuts import render,redirect,HttpResponse,HttpResponseRedirect
 from .forms import LoginForm,RegisterForm
 from django.contrib.auth import authenticate,login,logout as auth_logout
 from django.contrib import messages
@@ -36,6 +36,19 @@ def login_view(request):
     form = LoginForm()  # Create an empty form
     return render(request, "registration\login_page.html", {"form": form})
 
+def custom_login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            next_url = request.GET.get('next')
+            if next_url:
+                return HttpResponseRedirect(next_url)
+            else:
+                return redirect('home')  # Replace 'home' with the name of your default view
+    return render(request, 'login.html')
 def logout(request):
     auth_logout(request)  # Logs the user out
     messages.success(request, "You have been logged out successfully.")  # Add success message
@@ -100,48 +113,47 @@ def description(request,name):
                       
                   })
 #listing all the product in products page
+
 def product_list(request):
-    product=Product.objects.all()
-    return render(request,"base/product_list.html",{
-        "product":product
-    })
+
+    messages.info(request,"Item added to cart")
+    if request.user:
+        product=Product.objects.all()
+        return render(request,"base/product_list.html",{
+            "product":product
+        })
+    else:
+        return redirect("login")
+
+@login_required
+def add_to_cart(request, product_id):
+    
+    customer, created = Customer.objects.get_or_create(user=request.user)
+    if customer is None:
+        messages.info(request,"Item added to cart")
+    product = Product.objects.get(id=product_id)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order_item, created = OrderItem.objects.get_or_create(order=order, product=product, user=request.user)
+    order_item.quantity += 1
+    order_item.save()
+    
+    return redirect('product_list')
+    
+
 
 def view_cart(request):
-    if request.user:
-        try:
-            user = request.user
-            customer = Customer.objects.get(user=user)
-            order = Order.objects.filter(customer=customer, complete=False).first()
-            if order:
-                items = OrderItem.objects.all()
-                print(f"Items in cart for {request.user.username}: {[item.product.name for item in items]}")
-            else:
-                items = []
-                print(f"No active order found for {request.user.username}")
-        except Customer.DoesNotExist:
-            items = []
-            print(f"No customer found for user {request.user.username}")
-    else:
-        items = []
-        print("User is not authenticated")
+    items=OrderItem.objects.filter(user=request.user)
     return render(request, 'base/cart.html', {"items": items})
 
-def add_to_cart(request, id):
-    item = get_object_or_404(Product, id=id)
-    user = request.user.is_authenticated
-    customer = Customer.objects.get(user=user)
-    # Retrieve the most recent incomplete order for the customer
-    order = Order.objects.filter(customer=customer, complete=False).order_by('-date_ordered').first()
-    if order is None:
-        order = Order.objects.create(customer=customer, complete=False)
-    # Get or create the order item for the product within the selected order
-    order_item, created = OrderItem.objects.get_or_create(product=item, order=order)
-    # If the order item already exists in the order, increase the quantity
-    if not created:
-        order_item.quantity += 1
-        order_item.save()
-    return redirect('product_list')   # Redirect to the product list page
 
+def remove_item(request,product_id):
+    items=OrderItem.objects.get(id=product_id)
+    items.delete()
+    return redirect('cart')
+
+
+@login_required
 def checkout(request):
+    #Todo
     items=OrderItem.objects.all()
     return render(request, 'base/checkout.html', {'items': items,})
