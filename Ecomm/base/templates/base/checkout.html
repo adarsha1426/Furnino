@@ -1,67 +1,59 @@
 {% include 'nav.html' %}
 {% load static %}
 {% block content %}
-     <div class="row">
-		<div class="col-lg-6">
-			<div class="box-element" id="form-wrapper">
-				<form id="form">
-					<div id="user-info">
-						<div class="form-field">
-							<input required class="form-control" type="text" name="name" placeholder="Name..">
-						</div>
-						<div class="form-field">
-							<input required class="form-control" type="email" name="email" placeholder="Email..">
-						</div>
-					</div>
-					
-					<div id="shipping-info">
-						<hr>
-						<p>Shipping Information:</p>
-						<hr>
-						<div class="form-field">
-							<input class="form-control" type="text" name="address" placeholder="Address..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="city" placeholder="City..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="state" placeholder="State..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="country" placeholder="Zip code..">
-						</div>
-					</div>
+     
+<div class="col-lg-6">
+    <body>
+        <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="text" id="amount" name="amount" value="100" required>
+            </div>
+            <div class="form-group">
+                <label for="tax_amount">Tax Amount</label>
+                <input type="text" id="tax_amount" name="tax_amount" value="10" required>
+            </div>
+            <div class="form-group">
+                <label for="total_amount">Total Amount</label>
+                <input type="text" id="total_amount" name="total_amount" value="110" required>
+            </div>
+            <div class="form-group">
+                <label for="transaction_uuid">Transaction UUID</label>
+                <input type="text" id="transaction_uuid" name="transaction_uuid" required>
+            </div>
+            <div class="form-group">
+                <label for="product_code">Product Code</label>
+                <input type="text" id="product_code" name="product_code" value="EPAYTEST" required>
+            </div>
+            <div class="form-group">
+                <label for="product_service_charge">Product Service Charge</label>
+                <input type="text" id="product_service_charge" name="product_service_charge" value="0" required>
+            </div>
+            <div class="form-group">
+                <label for="product_delivery_charge">Product Delivery Charge</label>
+                <input type="text" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
+            </div>
+            <div class="form-group">
+                <label for="success_url">Success URL</label>
+                <input type="text" id="success_url" name="success_url" value="https://esewa.com.np" required>
+            </div>
+            <div class="form-group">
+                <label for="failure_url">Failure URL</label>
+                <input type="text" id="failure_url" name="failure_url" value="https://google.com" required>
+            </div>
+            <div class="form-group">
+                <label for="signed_field_names">Signed Field Names</label>
+                <input type="text" id="signed_field_names" name="signed_field_names" value="total_amount,transaction_uuid,product_code" required>
+            </div>
+            <div class="form-group">
+                <label for="signature">Signature</label>
+                <input type="text" id="signature" name="signature" required>
+            </div>
+            <div class="form-group">
+                <input value="Submit" type="submit">
+            </div>
+        </form>
+    </body>
+</div>
 
-					<hr>
-					<input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
-				</form>
-			</div>
-
-			<br>
-			<div class="box-element hidden" id="payment-info">
-				<small>Paypal Options</small>
-			</div>
-			
-		</div>
-
-		<div class="col-lg-6">
-			<div class="box-element">
-				<a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
-				<hr>
-				<h3>Order Summary</h3>
-				<hr>
-				<div class="cart-row">
-					
-					<div style="flex:2"><p>{{item.product}}</p></div>
-					<div style="flex:1"><p></p></div>
-					<div style="flex:1"><p></p></div>
-				</div>
-				<h5>Items:   2</h5>
-				<h5>Total:   Rs440000</h5>
-			</div>
-		</div>
-	</div>
 {% endblock content %}

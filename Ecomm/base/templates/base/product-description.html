@@ -22,7 +22,7 @@
                                 <h5 class="card-title">{{item.name}}</h5>
                                 <p class="card-text">{{item.description|safe}}</p>
                                 <h3 class="card-text">Rs.{{item.price}}</h3>
-                                <a href="" class="btn btn-primary"></a>
+                                <a href="{% url "buy" product_id=item.id %}" class="btn btn-primary">Buy Now</a>
                                 <a href="{% url "add" product_id=item.id %}" class="btn btn-primary">Add to cart</a>
                             </div>
                         </div>
