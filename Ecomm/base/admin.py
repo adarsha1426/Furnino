@@ -19,8 +19,8 @@ class OrderAdmin(admin.ModelAdmin):
     
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ['product', 'order', 'quantity']
-    list_filter = ('product',)
+    list_display = ['product', 'order', 'quantity','user']
+    list_filter = ('user',)
  
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
