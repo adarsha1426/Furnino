@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+import uuid
 class Category(models.Model):
     name = models.CharField(max_length=200)  # dining, living, kitchen
     slug = models.SlugField(max_length=200, unique=True)
@@ -56,7 +56,7 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=False)
     items = models.ManyToManyField(Product)
-    transaction_id = models.CharField(max_length=200, null=True)
+
 
     def __str__(self):
         return f"Order #{self.id} by {self.customer.full_name}"
@@ -72,6 +72,7 @@ class Order(models.Model):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
+   
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

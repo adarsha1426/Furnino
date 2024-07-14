@@ -47,7 +47,8 @@ def custom_login_view(request):
             if next_url:
                 return HttpResponseRedirect(next_url)
             else:
-                return redirect('home')  # Replace 'home' with the name of your default view
+                return redirect('home')  
+            
     return render(request, 'login.html')
 def logout(request):
     auth_logout(request)  # Logs the user out
@@ -115,8 +116,7 @@ def description(request,name):
 #listing all the product in products page
 
 def product_list(request):
-
-    messages.info(request,"Item added to cart")
+    
     if request.user:
         product=Product.objects.all()
         return render(request,"base/product_list.html",{
@@ -127,7 +127,6 @@ def product_list(request):
 
 @login_required
 def add_to_cart(request, product_id):
-    
     customer, created = Customer.objects.get_or_create(user=request.user)
     if customer is None:
         messages.info(request,"Item added to cart")
@@ -135,12 +134,10 @@ def add_to_cart(request, product_id):
     order, created = Order.objects.get_or_create(customer=customer, complete=False)
     order_item, created = OrderItem.objects.get_or_create(order=order, product=product, user=request.user)
     order_item.quantity += 1
+    messages.info(request,f"{product.name} added to cart")
     order_item.save()
-    
     return redirect('product_list')
     
-
-
 def view_cart(request):
     items=OrderItem.objects.filter(user=request.user)
     return render(request, 'base/cart.html', {"items": items})
@@ -148,12 +145,42 @@ def view_cart(request):
 
 def remove_item(request,product_id):
     items=OrderItem.objects.get(id=product_id)
+    messages.warning(request,f"{items.product.name} got removed.")
     items.delete()
     return redirect('cart')
 
+#incrementing and Decrementing 
+def cart_quantity(request,product_id):
+    items=OrderItem.objects.get(id=product_id)
+    if 'increment' in request.GET:
+        items.quantity+=1
+        items.save()
+        print(items.quantity)
+    elif 'decrement' in request.GET:
+        if items.quantity==1:
+            remove_item(request,product_id)
+        else:
+            items.quantity-=1
+            items.save()
+    else:
+        messages.error("Error")
+    return redirect('cart')
+
+#after clicking direct BUY NOW 
+@login_required
+def buy_now(request,product_id):
+    customer, created = Customer.objects.get_or_create(user=request.user)
+    if customer is None:
+        messages.info(request,"Item added to cart")
+    product = Product.objects.get(id=product_id)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    order_item, created = OrderItem.objects.get_or_create(order=order, product=product, user=request.user)
+    order_item.quantity += 1
+    messages.info(request,f"{product.name} added to cart")
+    order_item.save()
+    return redirect('cart')
 
 @login_required
 def checkout(request):
-    #Todo
     items=OrderItem.objects.all()
     return render(request, 'base/checkout.html', {'items': items,})
