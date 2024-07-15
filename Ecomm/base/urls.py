@@ -21,5 +21,4 @@ urlpatterns = [
     path('accounts/login',views.login_view,name="login"),
     path('buy/<int:product_id>',views.buy_now,name="buy"),
     path('update/<int:product_id>',views.cart_quantity,name="update"),
-
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

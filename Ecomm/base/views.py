@@ -138,9 +138,13 @@ def add_to_cart(request, product_id):
     order_item.save()
     return redirect('product_list')
     
+
 def view_cart(request):
+    customer = get_object_or_404(Customer, user=request.user)
     items=OrderItem.objects.filter(user=request.user)
-    return render(request, 'base/cart.html', {"items": items})
+    order = get_object_or_404(Order, customer=customer, complete=False)
+    total_amount = order.get_cart_total
+    return render(request, 'base/cart.html', {"items": items,"total_amount":total_amount})
 
 
 def remove_item(request,product_id):
@@ -165,6 +169,7 @@ def cart_quantity(request,product_id):
     else:
         messages.error("Error")
     return redirect('cart')
+
 
 #after clicking direct BUY NOW 
 @login_required
