@@ -2,20 +2,23 @@
 {% load static %}
 {% block content %}
      
+
+
 <div class="col-lg-6">
     <body>
         <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+          
             <div class="form-group">
                 <label for="amount">Amount</label>
-                <input type="text" id="amount" name="amount" value="100" required>
+                <input type="text" id="amount" name="amount" value="" required>
             </div>
             <div class="form-group">
                 <label for="tax_amount">Tax Amount</label>
-                <input type="text" id="tax_amount" name="tax_amount" value="10" required>
+                <input type="text" id="tax_amount" name="tax_amount" value="" required>
             </div>
             <div class="form-group">
                 <label for="total_amount">Total Amount</label>
-                <input type="text" id="total_amount" name="total_amount" value="110" required>
+                <input type="text" id="total_amount" name="total_amount" value="{{total_amount}}" required>
             </div>
             <div class="form-group">
                 <label for="transaction_uuid">Transaction UUID</label>
@@ -52,6 +55,8 @@
             <div class="form-group">
                 <input value="Submit" type="submit">
             </div>
+
+       
         </form>
     </body>
 </div>
