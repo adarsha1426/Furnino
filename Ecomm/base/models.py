@@ -56,6 +56,7 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=False)
     items = models.ManyToManyField(Product)
+    transaction_id=uuid.uuid4()
 
 
     def __str__(self):

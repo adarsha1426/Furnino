@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Category,Product,Customer,Order,OrderItem
 from django.shortcuts import get_object_or_404
 from django.urls  import reverse
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -143,7 +144,7 @@ def view_cart(request):
     customer = get_object_or_404(Customer, user=request.user)
     items=OrderItem.objects.filter(user=request.user)
     order = get_object_or_404(Order, customer=customer, complete=False)
-    total_amount = order.get_cart_total
+    total_amount =order.get_cart_total
     return render(request, 'base/cart.html', {"items": items,"total_amount":total_amount})
 
 
@@ -185,7 +186,47 @@ def buy_now(request,product_id):
     order_item.save()
     return redirect('cart')
 
+
+import hmac
+import hashlib
+import base64
+
+def signature(secret, message):
+    secret_bytes = bytes(secret, 'utf-8')
+    message_bytes = bytes(message, 'utf-8')
+    
+    hmac_obj = hmac.new(secret_bytes, message_bytes, hashlib.sha256)
+    hmac_digest = hmac_obj.digest()
+    
+    hash = base64.b64encode(hmac_digest).decode()
+    return hash
+
+# Example usage
+secret = "your_secret_key"
+message = "your_message"
+print(signature(secret, message))
+
+
 @login_required
 def checkout(request):
-    items=OrderItem.objects.all()
-    return render(request, 'base/checkout.html', {'items': items,})
+    customer = get_object_or_404(Customer, user=request.user)
+    items = OrderItem.objects.filter(user=request.user)
+    order = get_object_or_404(Order, customer=customer, complete=False)
+    total_amount = order.get_cart_total
+    messages = f"{total_amount},{order.transaction_id},{{order.id}}"
+    print(order.id)
+    
+    print("Data used for signature:", messages)  # Debugging log
+    hash = signature("8gBm/:&EnhH.1/q", messages)
+    
+    print("Generated signature:", hash)  # Debugging log
+    print(total_amount)
+    print(f"Transaction:{order.transaction_id}")
+    
+    return render(request, 'base/checkout.html', {
+        'items': items,
+        'total_amount': total_amount,
+        'transaction_id':order.transaction_id,
+        'signature': hash,
+        'order':order
+    })
