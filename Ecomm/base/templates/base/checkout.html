@@ -3,62 +3,55 @@
 {% block content %}
      
 
-
-<div class="col-lg-6">
-    <body>
-        <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
-          
-            <div class="form-group">
-                <label for="amount">Amount</label>
-                <input type="text" id="amount" name="amount" value="" required>
-            </div>
-            <div class="form-group">
-                <label for="tax_amount">Tax Amount</label>
-                <input type="text" id="tax_amount" name="tax_amount" value="" required>
-            </div>
-            <div class="form-group">
-                <label for="total_amount">Total Amount</label>
-                <input type="text" id="total_amount" name="total_amount" value="{{total_amount}}" required>
-            </div>
-            <div class="form-group">
-                <label for="transaction_uuid">Transaction UUID</label>
-                <input type="text" id="transaction_uuid" name="transaction_uuid" required>
-            </div>
-            <div class="form-group">
-                <label for="product_code">Product Code</label>
-                <input type="text" id="product_code" name="product_code" value="EPAYTEST" required>
-            </div>
-            <div class="form-group">
-                <label for="product_service_charge">Product Service Charge</label>
-                <input type="text" id="product_service_charge" name="product_service_charge" value="0" required>
-            </div>
-            <div class="form-group">
-                <label for="product_delivery_charge">Product Delivery Charge</label>
-                <input type="text" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
-            </div>
-            <div class="form-group">
-                <label for="success_url">Success URL</label>
-                <input type="text" id="success_url" name="success_url" value="https://esewa.com.np" required>
-            </div>
-            <div class="form-group">
-                <label for="failure_url">Failure URL</label>
-                <input type="text" id="failure_url" name="failure_url" value="https://google.com" required>
-            </div>
-            <div class="form-group">
-                <label for="signed_field_names">Signed Field Names</label>
-                <input type="text" id="signed_field_names" name="signed_field_names" value="total_amount,transaction_uuid,product_code" required>
-            </div>
-            <div class="form-group">
-                <label for="signature">Signature</label>
-                <input type="text" id="signature" name="signature" required>
-            </div>
-            <div class="form-group">
-                <input value="Submit" type="submit">
-            </div>
-
+<h2 class='mt-4'>Order Checkout</h2>
+<div class="card">
+    <div class="card-body">
        
+        <p>Name : {{request.user.first_name}}&nbsp;{{request.user.last_name}}</p>
+        <p>Price : {{total_amount}}</p>
+      
+        
+     
+        <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
+            <label for="amount">Amount:</label>
+            <input type="text" id="amount" name="amount" value="{{ total_amount }}" required>
+            <br>
+            <label for="tax_amount">Tax Amount:</label>
+            <input type="text" id="tax_amount" name="tax_amount" value="0" required>
+            <br>
+            <label for="total_amount">Total Amount:</label>
+            <input type="text" id="total_amount" name="total_amount" value="{{ total_amount }}" required>
+            <br>
+            <label for="transaction_uuid">Transaction UUID:</label>
+            <input type="text" id="transaction_uuid" name="transaction_uuid" value="{{ transaction_id }}" required>
+            <br>
+            <label for="product_code">Product Code:</label>
+            <input type="text" id="product_code" name="product_code" value="{{order.id}}" required>
+            <br>
+            <label for="product_service_charge">Product Service Charge:</label>
+            <input type="text" id="product_service_charge" name="product_service_charge" value="0" required>
+            <br>
+            <label for="product_delivery_charge">Product Delivery Charge:</label>
+            <input type="text" id="product_delivery_charge" name="product_delivery_charge" value="0" required>
+            <br>
+            <label for="success_url">Success URL:</label>
+            <input type="text" id="success_url" name="success_url" value="https://esewa.com.np" required>
+            <br>
+            <label for="failure_url">Failure URL:</label>
+            <input type="text" id="failure_url" name="failure_url" value="https://google.com" required>
+            <br>
+            <label for="signed_field_names">Signed Field Names:</label>
+            <input type="text" id="signed_field_names" name="signed_field_names" value="{{total_amount}},{{transaction_id}},{{order.id}}" required>
+            <br>
+            <label for="signature">Signature:</label>
+            <input type="text" id="signature" name="signature" value="{{ signature }}" required>
+            <br>
+            <input value="Submit" type="submit">
         </form>
-    </body>
+        
+    
+ 
+    </div>
 </div>
 
 {% endblock content %}
