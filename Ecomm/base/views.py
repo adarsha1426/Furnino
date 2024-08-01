@@ -35,7 +35,7 @@ def login_view(request):
             messages.error(request, "Form validation failed.")
     # If GET request or invalid POST, render the login page with form
     form = LoginForm()  # Create an empty form
-    return render(request, "registration\login_page.html", {"form": form})
+    return render(request, "registration/login_page.html", {"form": form})
 
 def custom_login_view(request):
     if request.method == 'POST':
